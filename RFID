@@ -1,0 +1,56 @@
+///
+This is not my code but has been edited. I hope this shows i understand the code :)
+///
+
+#include <SPI.h>
+#include <MFRC522.h>
+#include <Servo.h>
+Servo myservo;
+#define SS_PIN 10
+#define RST_PIN 9
+MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance.
+void setup() {
+  myservo.attach(3);
+  Serial.begin(115200);
+  SPI.begin();
+  mfrc522.PCD_Init();
+  myservo.write(0);
+}
+void loop() {
+  //Look for new cards
+  if ( !mfrc522.PICC_IsNewCardPresent() ) {
+    return;
+  }
+  //Select one of the cards
+  if ( !mfrc522.PICC_ReadCardSerial() ) {
+    return;
+  }
+  String content = "";
+  byte letter;
+  for ( byte i = 0; i < mfrc522.uid.size; i++ ) {
+    content.concat(String(mfrc522.uid.uidByte[i], HEX));
+    if ( i < mfrc522.uid.size - 1 ) content += "-";
+  }
+  content.toUpperCase();
+  Serial.println();
+  Serial.println("UID tag :'" + content + "'");
+  if ( content == "C6-5E-75-1A") {
+    myservo.write(180);
+    Serial.println("Authorized access");
+    delay(1000);
+    myservo.write(0);
+    delay(1000);
+  }
+  if ( content == "89-C4-9B-2B" ) {
+    myservo.write(180);
+    Serial.println("Authorized access. Welcome Tom");
+    delay(1000);
+    myservo.write(0);
+    delay(1000);
+  }
+  else {
+    Serial.println("Access denied");
+
+  }
+  delay(1000);
+}
