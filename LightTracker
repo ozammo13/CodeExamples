@@ -1,0 +1,81 @@
+///
+This uses ldrs to turn a solar panel towards the brughtest light source. The solar panel
+is mounted onto a holder i designer(will be in the cad section of my google drive folder)
+
+ 
+
+#include <Stepper.h>
+ 
+
+#define STEPS 32
+ 
+
+#define IN1  11
+#define IN2  10
+#define IN3   9
+#define IN4   8
+ 
+
+Stepper stepper(STEPS, IN4, IN2, IN3, IN1);
+ 
+int sensor1 = A5; 
+int sensorValue1 = 0;
+int sensor2 = A4; 
+int sensorValue2 = 0;
+int sensorValues = 0;
+void setup()
+{
+Serial.begin(9600); 
+ 
+void loop()
+{
+  
+  sensorValue1 = analogRead(sensor1); 
+  Serial.println((sensorValue1)); 
+  sensorValue2 = analogRead(sensor2); 
+  Serial.println(sensorValue2); 
+  sensorValues = (sensorValue1) + (sensorValue2);
+  delay(150);
+ 
+  // if the joystic is in the middle ===> stop the motor
+  if(  ((sensorValues) > 1700) || ((sensorValues) < 1200) )
+  {
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, LOW);
+    sensorValue1 = analogRead(sensor1); // read the value from the sensor
+    sensorValue2 = analogRead(sensor2);
+    sensorValues = (sensorValue1) + (sensorValue2);
+  }
+  if ((1200 < (sensorValues) < 1700) &&  ((sensorValue1) > (sensorValue2)))
+  {
+    // map the speed between 5 and 500 rpm
+    int speed_ = 50;
+    // set motor speed
+    stepper.setSpeed(speed_);
+ 
+    // move the motor (1 step)
+    stepper.step(1);
+ 
+    sensorValue1 = analogRead(sensor1); // read the value from the sensor
+    sensorValue2 = analogRead(sensor2);
+    sensorValues = (sensorValue1) + (sensorValue2);
+  }
+  if ((1200 < (sensorValues) < 1700) &&  ((sensorValue1) < (sensorValue2)))
+  {
+    
+    int speed_ = 50;
+    // set motor speed
+    stepper.setSpeed(speed_);
+ 
+    // move the motor (1 step)
+    stepper.step(-1);
+ 
+    sensorValue1 = analogRead(sensor1); // read the value from the sensor
+    sensorValue2 = analogRead(sensor2);
+    sensorValues = (sensorValue1) + (sensorValue2);
+    }
+  
+}
+ 
