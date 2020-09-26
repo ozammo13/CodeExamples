@@ -1,0 +1,58 @@
+///
+READ ME
+Bluetooth rover controlled through a mobile app, i did not make the app but i will be teahing myself app development soon
+///
+char t;
+
+ 
+const int buzzerPin = 9;
+ 
+void setup() 
+pinMode(13,OUTPUT);   //left motors f
+pinMode(12,OUTPUT);   //left motors r
+pinMode(11,OUTPUT);   //right motors f
+pinMode(10,OUTPUT);   //right motors r
+Serial.begin(9600);
+ 
+}
+ 
+void loop() {
+if(Serial.available()){
+  t = Serial.read();
+  Serial.println(t);
+}
+ 
+if(t == 'F'){            //move forward(all motors rotate in forward direction)
+  digitalWrite(13,HIGH);
+  digitalWrite(11,HIGH);
+}
+ 
+else if(t == 'B'){      //move reverse (all motors rotate in reverse direction)
+  digitalWrite(12,HIGH);
+  digitalWrite(10,HIGH);
+}
+ 
+else if(t == 'L'){      //turn right (left side motors rotate in forward direction, right side motors doesn't rotate)
+  digitalWrite(13,HIGH);
+}
+ 
+else if(t == 'R'){      //turn left (right side motors rotate in forward direction, left side motors doesn't rotate)
+  digitalWrite(1,HIGH);
+}
+
+ 
+else if(t == 'S'){      //STOP (all motors stop)
+  digitalWrite(13,LOW);
+  digitalWrite(12,LOW);
+  digitalWrite(11,LOW);
+  digitalWrite(10,LOW);
+}
+else if(t == 'V'){      //STOP (all motors stop)
+  tone(buzzerPin, 450); // Horn on
+
+}
+ 
+else if(t == 'v'){      //move reverse (all motors rotate in reverse direction)
+  noTone(9); //Horn off
+}
+}
